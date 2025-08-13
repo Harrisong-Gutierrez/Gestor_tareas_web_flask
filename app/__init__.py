@@ -1,8 +1,7 @@
 from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
-from config import Config  # ✅ aquí solo traemos la configuración
+from config import Config
 import secrets
-
 
 db = SQLAlchemy()
 
@@ -10,8 +9,7 @@ def create_app(config_class=Config):
     app = Flask(__name__)
     app.config.from_object(config_class)
     
-    app.secret_key = secrets.token_hex(32) 
-    
+    app.secret_key = secrets.token_hex(32)
     
     db.init_app(app)
     

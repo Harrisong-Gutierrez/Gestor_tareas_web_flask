@@ -1,138 +1,146 @@
 {% extends "base.html" %}
 
 {% block content %}
-    <h1 class="mb-4">Gestión de Tareas</h1>
-    
-    <div class="row mb-4">
-        <div class="col-md-6">
-            <h3>Agregar Nueva Tarea</h3>
-            <form method="POST">
-                <div class="mb-3">
-                    <label for="title" class="form-label">Título</label>
-                    <input type="text" class="form-control" id="title" name="title" required>
-                </div>
-                <div class="mb-3">
-                    <label for="description" class="form-label">Descripción</label>
-                    <textarea class="form-control" id="description" name="description" rows="3" required></textarea>
-                </div>
-                <div class="mb-3">
-                    <label for="priority" class="form-label">Prioridad</label>
-                    <select class="form-select" id="priority" name="priority">
-                        <option value="1">Baja</option>
-                        <option value="2" selected>Media</option>
-                        <option value="3">Alta</option>
-                    </select>
-                </div>
-                <div class="mb-3">
-                    <div class="form-check">
-                        <input class="form-check-input" type="checkbox" id="timed_task" name="task_type" value="timed">
-                        <label class="form-check-label" for="timed_task">
-                            ¿Es una tarea con fecha límite?
-                        </label>
-                    </div>
-                </div>
-                <div class="mb-3" id="due_date_container" style="display: none;">
-                    <label for="due_date" class="form-label">Fecha Límite</label>
-                    <input type="date" class="form-control" id="due_date" name="due_date">
-                </div>
-                <button type="submit" class="btn btn-primary">Agregar Tarea</button>
-            </form>
-        </div>
-    </div>
-    
-    <div class="row">
-        <div class="col-12">
-            <h3>Lista de Tareas</h3>
-            
+<h1 class="mb-4">Gestión de Tareas</h1>
+
+<div class="row mb-4">
+    <div class="col-md-6">
+        <h3>Agregar Nueva Tarea</h3>
+        <form method="POST">
             <div class="mb-3">
-                <div class="btn-group" role="group">
-                    <a href="{{ url_for('main.manage_tasks', sort_by='priority', show_completed=show_completed) }}" 
-                       class="btn btn-outline-secondary {% if sort_by == 'priority' %}active{% endif %}">
-                        Ordenar por Prioridad
-                    </a>
-                    <a href="{{ url_for('main.manage_tasks', sort_by='date', show_completed=show_completed) }}" 
-                       class="btn btn-outline-secondary {% if sort_by == 'date' %}active{% endif %}">
-                        Ordenar por Fecha
-                    </a>
-                </div>
-                
-                <div class="btn-group ms-3" role="group">
-                    <a href="{{ url_for('main.manage_tasks', sort_by=sort_by, show_completed='all') }}" 
-                       class="btn btn-outline-secondary {% if show_completed == 'all' %}active{% endif %}">
-                        Todas
-                    </a>
-                    <a href="{{ url_for('main.manage_tasks', sort_by=sort_by, show_completed='pending') }}" 
-                       class="btn btn-outline-secondary {% if show_completed == 'pending' %}active{% endif %}">
-                        Pendientes
-                    </a>
-                    <a href="{{ url_for('main.manage_tasks', sort_by=sort_by, show_completed='completed') }}" 
-                       class="btn btn-outline-secondary {% if show_completed == 'completed' %}active{% endif %}">
-                        Completadas
-                    </a>
+                <label for="title" class="form-label">Título</label>
+                <input type="text" class="form-control" id="title" name="title" required>
+            </div>
+            <div class="mb-3">
+                <label for="description" class="form-label">Descripción</label>
+                <textarea class="form-control" id="description" name="description" rows="3" required></textarea>
+            </div>
+            <div class="mb-3">
+                <label for="priority" class="form-label">Prioridad</label>
+                <select class="form-select" id="priority" name="priority">
+                    <option value="1">Baja</option>
+                    <option value="2" selected>Media</option>
+                    <option value="3">Alta</option>
+                </select>
+            </div>
+            <div class="mb-3">
+                <div class="form-check">
+                    <input class="form-check-input" type="checkbox" id="timed_task" name="task_type" value="timed">
+                    <label class="form-check-label" for="timed_task">
+                        ¿Es una tarea con fecha límite?
+                    </label>
                 </div>
             </div>
-            
-            <div class="table-responsive">
-                <table class="table table-striped">
-                    <thead>
-                        <tr>
-                            <th>Título</th>
-                            <th>Descripción</th>
-                            <th>Prioridad</th>
-                            <th>Fecha Creación</th>
-                            <th>Estado</th>
-                            <th>Acciones</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {% for task in tasks %}
-                            <tr class="{% if task.completed %}table-success{% endif %}">
-                                <td>{{ task.title }}</td>
-                                <td>{{ task.description }}</td>
-                                <td>
-                                    <span class="badge 
-                                        {% if task.priority.value == 3 %}bg-danger
-                                        {% elif task.priority.value == 2 %}bg-warning text-dark
-                                        {% else %}bg-primary{% endif %}">
-                                        {{ task.priority.name }}
-                                    </span>
-                                </td>
-                                <td>{{ task.created_at.strftime('%Y-%m-%d %H:%M') }}</td>
-                                <td>
-                                    {% if task.completed %}
-                                        <span class="badge bg-success">Completada</span>
-                                    {% else %}
-                                        <span class="badge bg-secondary">Pendiente</span>
-                                    {% endif %}
-                                </td>
-                                <td>
-                                    {% if not task.completed %}
-                                        <a href="{{ url_for('main.complete_task', task_id=task.id) }}" 
-                                           class="btn btn-sm btn-success">Completar</a>
-                                    {% endif %}
-                                    <a href="{{ url_for('main.delete_task', task_id=task.id) }}" 
-                                       class="btn btn-sm btn-danger">Eliminar</a>
-                                </td>
-                            </tr>
-                        {% else %}
-                            <tr>
-                                <td colspan="6" class="text-center">No hay tareas registradas</td>
-                            </tr>
-                        {% endfor %}
-                    </tbody>
-                </table>
+            <div class="mb-3" id="due_date_container" style="display: none;">
+                <label for="due_date" class="form-label">Fecha Límite</label>
+                <input type="date" class="form-control" id="due_date" name="due_date">
+            </div>
+            <button type="submit" class="btn btn-primary">Agregar Tarea</button>
+        </form>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-12">
+        <h3>Lista de Tareas</h3>
+
+        <div class="mb-3">
+            <div class="btn-group" role="group">
+                <a href="{{ url_for('main.manage_tasks', sort_by='priority', show_completed=show_completed) }}"
+                    class="btn btn-outline-secondary {% if sort_by == 'priority' %}active{% endif %}">
+                    Ordenar por Prioridad
+                </a>
+                <a href="{{ url_for('main.manage_tasks', sort_by='date', show_completed=show_completed) }}"
+                    class="btn btn-outline-secondary {% if sort_by == 'date' %}active{% endif %}">
+                    Ordenar por Fecha
+                </a>
+            </div>
+
+            <div class="btn-group ms-3" role="group">
+                <a href="{{ url_for('main.manage_tasks', sort_by=sort_by, show_completed='all') }}"
+                    class="btn btn-outline-secondary {% if show_completed == 'all' %}active{% endif %}">
+                    Todas
+                </a>
+                <a href="{{ url_for('main.manage_tasks', sort_by=sort_by, show_completed='pending') }}"
+                    class="btn btn-outline-secondary {% if show_completed == 'pending' %}active{% endif %}">
+                    Pendientes
+                </a>
+                <a href="{{ url_for('main.manage_tasks', sort_by=sort_by, show_completed='completed') }}"
+                    class="btn btn-outline-secondary {% if show_completed == 'completed' %}active{% endif %}">
+                    Completadas
+                </a>
             </div>
         </div>
+
+        <div class="table-responsive">
+            <table class="table table-striped">
+                <thead>
+                    <tr>
+                        <th>Título</th>
+                        <th>Descripción</th>
+                        <th>Prioridad</th>
+                        <th>Fecha Creación</th>
+                        <th>Estado</th>
+                        <th>Acciones</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for task in tasks %}
+                    <tr class="{% if task.completed %}table-success{% endif %}">
+                        <td>{{ task.title }}</td>
+                        <td>{{ task.description }}</td>
+                        <td>
+                            <span class="badge 
+        {% if task.priority == 3 or task.priority.value == 3 %}bg-danger
+        {% elif task.priority == 2 or task.priority.value == 2 %}bg-warning text-dark
+        {% else %}bg-primary{% endif %}">
+                                {% if task.priority.name %}
+                                {{ task.priority.name }}
+                                {% elif task.priority == 1 %}
+                                Baja
+                                {% elif task.priority == 2 %}
+                                Media
+                                {% elif task.priority == 3 %}
+                                Alta
+                                {% endif %}
+                            </span>
+                        </td>
+                        <td>{{ task.created_at.strftime('%Y-%m-%d %H:%M') }}</td>
+                        <td>
+                            {% if task.completed %}
+                            <span class="badge bg-success">Completada</span>
+                            {% else %}
+                            <span class="badge bg-secondary">Pendiente</span>
+                            {% endif %}
+                        </td>
+                        <td>
+                            {% if not task.completed %}
+                            <a href="{{ url_for('main.complete_task', task_id=task.id) }}"
+                                class="btn btn-sm btn-success">Completar</a>
+                            {% endif %}
+                            <a href="{{ url_for('main.delete_task', task_id=task.id) }}"
+                                class="btn btn-sm btn-danger">Eliminar</a>
+                        </td>
+                    </tr>
+                    {% else %}
+                    <tr>
+                        <td colspan="6" class="text-center">No hay tareas registradas</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
     </div>
-    
-    <script>
-        document.getElementById('timed_task').addEventListener('change', function() {
-            const dueDateContainer = document.getElementById('due_date_container');
-            if (this.checked) {
-                dueDateContainer.style.display = 'block';
-            } else {
-                dueDateContainer.style.display = 'none';
-            }
-        });
-    </script>
+</div>
+
+<script>
+    document.getElementById('timed_task').addEventListener('change', function () {
+        const dueDateContainer = document.getElementById('due_date_container');
+        if (this.checked) {
+            dueDateContainer.style.display = 'block';
+        } else {
+            dueDateContainer.style.display = 'none';
+        }
+    });
+</script>
 {% endblock %}
