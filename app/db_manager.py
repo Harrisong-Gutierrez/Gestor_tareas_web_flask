@@ -1,15 +1,13 @@
-
 from sqlalchemy import text
 from datetime import datetime
 from config import engine
 from app.models import Task, Priority
-import uuid  # Importación añadida
+import uuid
 
 class DBManager:
     def add_task(self, task_data):
         try:
             with engine.begin() as conn:
-                # Generar UUID si no viene en los datos
                 task_id = task_data.get('id', str(uuid.uuid4()))
                 
                 conn.execute(
@@ -34,20 +32,50 @@ class DBManager:
             raise e
 
     def complete_task(self, task_id):
-        with engine.begin() as conn:
-            result = conn.execute(
-                text("UPDATE tasks SET completed = :completed WHERE id = :id"),
-                {"completed": True, "id": task_id}
-            )
-            return result.rowcount > 0
+        print(f"Attempting to complete task ID: {task_id}")
+        try:
+            with engine.begin() as conn:
+                check_task = conn.execute(
+                    text("SELECT id FROM tasks WHERE id = :id"),
+                    {"id": task_id}
+                ).fetchone()
+                
+                if not check_task:
+                    print(f"Task not found: {task_id}")
+                    return False
+                    
+                result = conn.execute(
+                    text("UPDATE tasks SET completed = TRUE WHERE id = :id"),
+                    {"id": task_id}
+                )
+                print(f"Rows affected: {result.rowcount}")
+                return result.rowcount > 0
+        except Exception as e:
+            print(f"Error completing task: {str(e)}")
+            raise e
 
-    def delete_task(self, task_id):
-        with engine.begin() as conn:
-            result = conn.execute(
-                text("DELETE FROM tasks WHERE id = :id"),
-                {"id": task_id}
-            )
-            return result.rowcount > 0
+    def delete_task(self, task_id): 
+        print(f"Attempting to delete task ID: {task_id}")
+        try:
+            with engine.begin() as conn:
+                check_task = conn.execute(
+                    text("SELECT id FROM tasks WHERE id = :id"),
+                    {"id": task_id}
+                ).fetchone()
+                
+                if not check_task:
+                    print(f"Task not found: {task_id}")
+                    return False
+                    
+                result = conn.execute(
+                    text("DELETE FROM tasks WHERE id = :id"),
+                    {"id": task_id}
+                )
+                print(f"Rows affected: {result.rowcount}")
+                return result.rowcount > 0
+        except Exception as e:
+            print(f"Error deleting task: {str(e)}")
+            raise e
 
     def get_tasks(self, sort_by='priority', show_completed=None):
         query = "SELECT * FROM tasks"

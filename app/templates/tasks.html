@@ -116,10 +116,11 @@
                         <td>
                             {% if not task.completed %}
                             <a href="{{ url_for('main.complete_task', task_id=task.id) }}"
-                                class="btn btn-sm btn-success">Completar</a>
+                                class="btn btn-sm btn-success"
+                                onclick="return confirm('¿Marcar esta tarea como completada?')">Completar</a>
                             {% endif %}
-                            <a href="{{ url_for('main.delete_task', task_id=task.id) }}"
-                                class="btn btn-sm btn-danger">Eliminar</a>
+                            <a href="{{ url_for('main.delete_task', task_id=task.id) }}" class="btn btn-sm btn-danger"
+                                onclick="return confirm('¿Estás seguro de eliminar esta tarea?')">Eliminar</a>
                         </td>
                     </tr>
                     {% else %}
