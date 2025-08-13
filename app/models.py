@@ -74,11 +74,7 @@ class Task(db.Model):
                 if isinstance(data["priority"], int)
                 else data["priority"]
             ),
-            due_date=(
-                datetime.strptime(data["due_date"], "%Y-%m-%d %H:%M:%S")
-                if data.get("due_date")
-                else None
-            ),
+            due_date=data.get("due_date", None),
             task_type=data.get("task_type", "normal"),
         )
 
@@ -87,10 +83,6 @@ class Task(db.Model):
         if "completed" in data:
             task.completed = data["completed"]
         if "created_at" in data:
-            task.created_at = (
-                datetime.strptime(data["created_at"], "%Y-%m-%d %H:%M:%S")
-                if isinstance(data["created_at"], str)
-                else data["created_at"]
-            )
+            task.created_at = data["created_at"]
 
         return task

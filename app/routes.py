@@ -28,16 +28,11 @@ def manage_tasks():
 
         if not errors:
             try:
-
-                due_date_obj = (
-                    datetime.strptime(due_date, "%Y-%m-%d") if due_date else None
-                )
-
                 new_task = Task(
                     title=title,
                     description=description,
                     priority=Priority(priority_num),
-                    due_date=due_date_obj,
+                    due_date=due_date,
                     task_type="timed" if task_type == "timed" else "normal",
                 )
 
