@@ -2,6 +2,7 @@
 from enum import Enum
 from datetime import datetime
 
+
 class Priority(Enum):
     LOW = 1
     MEDIUM = 2
@@ -11,8 +12,19 @@ class Priority(Enum):
     def name(self):
         return {1: "Baja", 2: "Media", 3: "Alta"}[self.value]
 
+
 class Task:
-    def __init__(self, id, title, description, priority, created_at, completed=False, due_date=None, task_type="normal"):
+    def __init__(
+        self,
+        id,
+        title,
+        description,
+        priority,
+        created_at,
+        completed=False,
+        due_date=None,
+        task_type="normal",
+    ):
         self.id = id
         self.title = title
         self.description = description

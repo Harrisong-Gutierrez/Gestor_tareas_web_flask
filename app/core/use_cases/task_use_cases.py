@@ -3,6 +3,7 @@ import uuid
 from datetime import datetime
 from app.core.entities.task import Priority, Task
 
+
 class TaskUseCases:
     def __init__(self, task_repository):
         self.repository = task_repository
@@ -27,15 +28,15 @@ class TaskUseCases:
         task = self.repository.get_by_id(task_id)
         if not task:
             return False, "Task not found"
-        
-        task.mark_as_completed()
+
+        task.mark_completed()
         return self.repository.update(task), None
 
     def delete_task(self, task_id):
         task = self.repository.get_by_id(task_id)
         if not task:
             return False, "Task not found"
-        
+
         return self.repository.delete(task_id), None
 
     def get_tasks(self, filters=None):
@@ -46,11 +47,14 @@ class TaskUseCases:
 
     def _validate_task(self, task_data):
         errors = []
-        
+
         if not task_data.get("title") or len(task_data["title"].strip()) < 3:
             errors.append("El título debe tener al menos 3 caracteres")
 
-        if not task_data.get("description") or len(task_data["description"].strip()) < 5:
+        if (
+            not task_data.get("description")
+            or len(task_data["description"].strip()) < 5
+        ):
             errors.append("La descripción debe tener al menos 5 caracteres")
 
         try:

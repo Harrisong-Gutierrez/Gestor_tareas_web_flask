@@ -9,9 +9,11 @@ from app.interfaces.helpers import flash_errors, validate_task_form
 
 bp = Blueprint("main", __name__)
 
+
 @bp.route("/")
 def index():
     return render_template("index.html")
+
 
 @bp.route("/tasks", methods=["GET", "POST"])
 def manage_tasks():
@@ -35,9 +37,9 @@ def manage_tasks():
                 "description": description,
                 "priority": Priority(priority_num),
                 "due_date": due_date,
-                "task_type": "timed" if task_type == "timed" else "normal"
+                "task_type": "timed" if task_type == "timed" else "normal",
             }
-            
+
             success, errors = use_case.add_task(task_data)
             if success:
                 flash("Tarea agregada correctamente!", "success")
@@ -51,25 +53,23 @@ def manage_tasks():
     sort_by = request.args.get("sort_by", "priority")
     show_completed = request.args.get("show_completed", "all")
 
-    filters = {
-        "sort_by": sort_by,
-        "show_completed": show_completed
-    }
-    
+    filters = {"sort_by": sort_by, "show_completed": show_completed}
+
     tasks = use_case.get_tasks(filters)
     return render_template(
         "tasks.html",
         tasks=tasks,
         Priority=Priority,  # Pasamos la clase Priority al template
         sort_by=sort_by,
-        show_completed=show_completed
+        show_completed=show_completed,
     )
+
 
 @bp.route("/complete_task/<string:task_id>")
 def complete_task(task_id):
     repo = TaskRepository(db.engine)
     use_case = TaskUseCases(repo)
-    
+
     success, error = use_case.complete_task(task_id)
     if success:
         flash("Tarea marcada como completada!", "success")
@@ -77,11 +77,12 @@ def complete_task(task_id):
         flash(error or "No se pudo encontrar la tarea", "danger")
     return redirect(url_for("main.manage_tasks"))
 
+
 @bp.route("/delete_task/<string:task_id>")
 def delete_task(task_id):
     repo = TaskRepository(db.engine)
     use_case = TaskUseCases(repo)
-    
+
     success, error = use_case.delete_task(task_id)
     if success:
         flash("Tarea eliminada correctamente!", "success")

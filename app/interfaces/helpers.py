@@ -2,6 +2,7 @@
 from flask import flash
 from datetime import datetime
 
+
 def validate_task_form(title, description, priority_str, due_date_str=None):
     errors = []
     priority = None
@@ -27,6 +28,7 @@ def validate_task_form(title, description, priority_str, due_date_str=None):
             errors.append("Fecha inválida. Use el formato YYYY-MM-DD")
 
     return errors, priority, due_date
+
 
 def flash_errors(errors):
     for error in errors:
