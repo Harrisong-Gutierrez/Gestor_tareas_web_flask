@@ -12,11 +12,10 @@ class TaskRepository:
         try:
             with self.engine.begin() as conn:
                 task_dict = task.to_dict()
-               
+
                 if isinstance(task_dict["priority"], Priority):
                     task_dict["priority"] = task_dict["priority"].value
-                
-             
+
                 if "created_at" in task_dict and isinstance(
                     task_dict["created_at"], datetime
                 ):
@@ -45,16 +44,15 @@ class TaskRepository:
         try:
             with self.engine.connect() as conn:
                 result = conn.execute(
-                    text("SELECT * FROM tasks WHERE id = :id"),
-                    {"id": task_id}
+                    text("SELECT * FROM tasks WHERE id = :id"), {"id": task_id}
                 )
                 row = result.fetchone()
                 if row:
                     task_data = dict(row._mapping)
-                    
+
                     if isinstance(task_data["priority"], int):
                         task_data["priority"] = Priority(task_data["priority"])
-                    
+
                     if "created_at" in task_data and isinstance(
                         task_data["created_at"], str
                     ):
@@ -79,11 +77,10 @@ class TaskRepository:
         try:
             with self.engine.begin() as conn:
                 task_dict = task.to_dict()
-             
+
                 if isinstance(task_dict["priority"], Priority):
                     task_dict["priority"] = task_dict["priority"].value
-                
-                
+
                 if "created_at" in task_dict and isinstance(
                     task_dict["created_at"], datetime
                 ):
@@ -158,10 +155,10 @@ class TaskRepository:
                 tasks = []
                 for row in result:
                     task_data = dict(row._mapping)
-                    
+
                     if isinstance(task_data["priority"], int):
                         task_data["priority"] = Priority(task_data["priority"])
-                  
+
                     if "created_at" in task_data and isinstance(
                         task_data["created_at"], str
                     ):

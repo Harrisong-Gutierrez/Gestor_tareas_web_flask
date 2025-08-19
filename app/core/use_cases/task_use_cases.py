@@ -58,10 +58,12 @@ class TaskUseCases:
             errors.append("La descripción debe tener al menos 5 caracteres")
 
         try:
-            priority = int(task_data.get("priority", 2))
-            if priority not in [1, 2, 3]:
+            priority = task_data.get("priority", Priority.MEDIUM)
+
+            if priority not in [Priority.LOW, Priority.MEDIUM, Priority.HIGH]:
                 errors.append("Prioridad inválida (debe ser 1, 2 o 3)")
         except (ValueError, TypeError):
+            print(task_data.get("priority"))
             errors.append("Prioridad debe ser un número (1, 2 o 3)")
 
         if "due_date" in task_data and task_data["due_date"]:
