@@ -51,25 +51,18 @@ class TaskUseCases:
         if not task_data.get("title") or len(task_data["title"].strip()) < 3:
             errors.append("El título debe tener al menos 3 caracteres")
 
-        if (
-            not task_data.get("description")
-            or len(task_data["description"].strip()) < 5
-        ):
+        if not task_data.get("description") or len(task_data["description"].strip()) < 5:
             errors.append("La descripción debe tener al menos 5 caracteres")
 
         try:
             priority = task_data.get("priority", Priority.MEDIUM)
-
             if priority not in [Priority.LOW, Priority.MEDIUM, Priority.HIGH]:
                 errors.append("Prioridad inválida (debe ser 1, 2 o 3)")
         except (ValueError, TypeError):
-            print(task_data.get("priority"))
             errors.append("Prioridad debe ser un número (1, 2 o 3)")
 
         if "due_date" in task_data and task_data["due_date"]:
-            try:
-                datetime.strptime(task_data["due_date"], "%Y-%m-%d")
-            except ValueError:
-                errors.append("Fecha inválida. Use el formato YYYY-MM-DD")
+            if not isinstance(task_data["due_date"], datetime):
+                errors.append("Fecha inválida. Debe ser un objeto datetime")
 
         return errors
