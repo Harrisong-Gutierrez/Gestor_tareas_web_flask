@@ -3,12 +3,11 @@ from sqlalchemy.pool import NullPool
 from dotenv import load_dotenv
 import os
 
-# Load environment variables from .env
+
 load_dotenv()
 
 
 class Config:
-    # Database config
     USER = os.getenv("user")
     PASSWORD = os.getenv("password")
     HOST = os.getenv("host")
@@ -19,10 +18,8 @@ class Config:
     SQLALCHEMY_TRACK_MODIFICATIONS = False
 
 
-# Como USER, PASSWORD, etc. no están en el scope global, usamos Config atributos explícitamente:
 Config.SQLALCHEMY_DATABASE_URI = f"postgresql+psycopg2://{Config.USER}:{Config.PASSWORD}@{Config.HOST}:{Config.PORT}/{Config.DBNAME}?sslmode=require"
 
-# Create the SQLAlchemy engine (optional if you're using Flask SQLAlchemy)
 engine = create_engine(Config.SQLALCHEMY_DATABASE_URI, poolclass=NullPool)
 
 

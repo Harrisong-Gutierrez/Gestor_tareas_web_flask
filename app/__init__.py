@@ -1,6 +1,6 @@
 from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
-import secrets  # Importamos el módulo secrets para generar una clave segura
+import secrets
 
 db = SQLAlchemy()
 

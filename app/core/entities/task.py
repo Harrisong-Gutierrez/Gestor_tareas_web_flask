@@ -1,4 +1,3 @@
-# core/entities/task.py
 from enum import Enum
 from datetime import datetime
 
