@@ -51,7 +51,10 @@ class TaskUseCases:
         if not task_data.get("title") or len(task_data["title"].strip()) < 3:
             errors.append("El título debe tener al menos 3 caracteres")
 
-        if not task_data.get("description") or len(task_data["description"].strip()) < 5:
+        if (
+            not task_data.get("description")
+            or len(task_data["description"].strip()) < 5
+        ):
             errors.append("La descripción debe tener al menos 5 caracteres")
 
         try:
